@@ -8,9 +8,14 @@
 // for more info, see: http://expressjs.com
 var express = require('express');
 
-// cfenv provides access to your Cloud Foundry environment
-// for more info, see: https://www.npmjs.com/package/cfenv
+
 var cfenv = require('cfenv');
+
+var appEnv = cfenv.getAppEnv();
+
+var cloudant_url;
+var vcapServices = require('vcap_services');
+
 
 
 // create a new express server
@@ -28,8 +33,8 @@ app.use(bodyParser(urlencodedParser));
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 
-// get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
+var credentials = vcapServices.getCredentials('NaturalLanguageUnderstandingV1');
+console.log(credentials);
 
 
 
@@ -87,6 +92,7 @@ function  analyzeUnderstanding (parameters,callback) {
     });
 
 }
+
 
 
 
