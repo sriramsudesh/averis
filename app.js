@@ -7,37 +7,18 @@
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 var express = require('express');
-
-
 var cfenv = require('cfenv');
-
 var appEnv = cfenv.getAppEnv();
 
-var cloudant_url;
-var vcapServices = require('vcap_services');
-
-
-
-// create a new express server
 var app = express();
-
 var bodyParser = require('body-parser');
-
 app.set('view engine', 'ejs');
 
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
 app.use(bodyParser(urlencodedParser));
-
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
-
-var credentials = vcapServices.getCredentials('NaturalLanguageUnderstandingV1');
-console.log(credentials);
-
-
-
 
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var natural_language_understanding = new NaturalLanguageUnderstandingV1({
@@ -50,9 +31,6 @@ app.get('/', function(req, res) {
   myresult = "";
   res.render('index',myresult);
 });
-
-
-
 
 app.post('/analyze', function(req, res) {
         var mytext = req.body.analyzeText;
@@ -92,10 +70,6 @@ function  analyzeUnderstanding (parameters,callback) {
     });
 
 }
-
-
-
-
 
 
 // start server on the specified port and binding host
