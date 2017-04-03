@@ -13,11 +13,11 @@ var appEnv = cfenv.getAppEnv();
 var app = express();
 var bodyParser = require('body-parser');
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 
-// Create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-app.use(bodyParser(urlencodedParser));
-// serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
@@ -47,7 +47,12 @@ app.post('/analyze', function(req, res) {
               'emotion': true,
               'sentiment': true,
               'limit': 2
-            }
+            },
+
+			'concepts': {
+			      'limit': 3
+			    }
+
           }
         }
         var myresult = "";
@@ -62,11 +67,17 @@ app.post('/analyze', function(req, res) {
 
 function  analyzeUnderstanding (parameters,callback) {
     natural_language_understanding.analyze(parameters, function(err, response) {
-      if (err)
-        console.log('error:', err);
-      else
-        console.log(JSON.stringify(response, null, 2));
-      callback(JSON.stringify(response, null, 2));
+      if (err) { console.log('error:', err)}
+      else {
+      	var results = JSON.stringify(response, null, 2);
+      	for(var i=0;i<results.concepts.length;i++)
+			{
+      			result += results.concepts[i].text  + ', ';
+      		}
+      	callback(result);
+      	}
+
+            
     });
 
 }
